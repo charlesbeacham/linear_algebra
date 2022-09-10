@@ -1,12 +1,15 @@
-from math import sqrt
+from math import sqrt, acos, pi
+from decimal import Decimal, getcontext
+
+getcontext().prec = 30
 
 class Vector(object):
     def __init__(self, coordinates):
         try:
             if not coordinates:
                 raise ValueError
-            self.coordinates = tuple(coordinates)
-            self.dimension = len(coordinates)
+            self.coordinates = tuple([Decimal(x) for x in coordinates])
+            self.dimension = len(self.coordinates)
 
         except ValueError:
             raise ValueError('The coordinates must be nonempty')
@@ -31,7 +34,7 @@ class Vector(object):
         return Vector(new_coordinates)
     
     def times_scalar(self, c):
-        new_coordinates = [c*x for x in self.coordinates]
+        new_coordinates = [Decimal(c)*x for x in self.coordinates]
         return Vector(new_coordinates)
         
     def magnitude(self):
@@ -40,8 +43,29 @@ class Vector(object):
     def normalize(self):
         try:
             magnitude = self.magnitude()
-            return self.times_scalar(1./magnitude)
+            return self.times_scalar(Decimal('1.0')/magnitude)
             
         except ZeroDivisionError:
             raise Exception('Cannot normalize the zero vector')
+            
+    def dot_product(self,v):
+        dot = sum([x*y for x,y in zip(self.coordinates,v.coordinates)])
+        return float(dot)
+        
+    def theta(self,v,in_degrees=False):
+        try:
+            mag_self, mag_v = self.magnitude(), v.magnitude()
+            angle = acos(self.dot_product(v) / (mag_self * mag_v))
+            
+            if in_degrees:
+                degrees_per_radian = 180/pi
+                return angle * degrees_per_radian
+            else:
+                return angle
+            
+        except ZeroDivisionError:
+            raise Exception('Cannot divide by zero')
+        
+        
+        
         
