@@ -1,5 +1,6 @@
-from math import sqrt, acos, pi
+from math import acos, pi, sqrt
 from decimal import Decimal, getcontext
+
 
 getcontext().prec = 30
 
@@ -38,7 +39,7 @@ class Vector(object):
         return Vector(new_coordinates)
         
     def magnitude(self):
-        return sqrt(sum([v**2 for v in self.coordinates]))
+        return (sum([v**Decimal('2') for v in self.coordinates])).sqrt()
         
     def normalize(self):
         try:
@@ -50,7 +51,7 @@ class Vector(object):
             
     def dot_product(self,v):
         dot = sum([x*y for x,y in zip(self.coordinates,v.coordinates)])
-        return float(dot)
+        return dot
         
     def theta(self,v,in_degrees=False):
         try:
@@ -58,7 +59,7 @@ class Vector(object):
             angle = acos(self.dot_product(v) / (mag_self * mag_v))
             
             if in_degrees:
-                degrees_per_radian = 180/pi
+                degrees_per_radian = 180./pi
                 return angle * degrees_per_radian
             else:
                 return angle
