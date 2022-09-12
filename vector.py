@@ -67,7 +67,7 @@ class Vector(object):
             raise Exception('Cannot divide by zero')
             
     def is_parallel(self,v):
-        check_coordinates = {x/y for x,y in zip(self.coordinates,v.coordinates)}
+        check_coordinates = {x/y if y != 0 else 0 for x,y in zip(self.coordinates,v.coordinates)}
         if len(check_coordinates) == 1:
             return True
         else:
