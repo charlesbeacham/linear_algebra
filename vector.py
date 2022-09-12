@@ -73,7 +73,11 @@ class Vector(object):
         else:
             return False
         
-        
+    def is_ortho(self,v):
+        if self.dot_product(v) == 0:
+            return True
+        else:
+            return False
         
         
         
