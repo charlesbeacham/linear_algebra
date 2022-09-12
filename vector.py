@@ -1,7 +1,6 @@
 from math import acos, pi, sqrt
 from decimal import Decimal, getcontext
 
-
 getcontext().prec = 30
 
 class Vector(object):
@@ -66,6 +65,14 @@ class Vector(object):
             
         except ZeroDivisionError:
             raise Exception('Cannot divide by zero')
+            
+    def is_parallel(self,v):
+        check_coordinates = {x/y for x,y in zip(self.coordinates,v.coordinates)}
+        if len(check_coordinates) == 1:
+            return True
+        else:
+            return False
+        
         
         
         
