@@ -68,16 +68,9 @@ class Vector(object):
             
     def is_parallel(self,v):
         check_coordinates = {x/y if y != 0 else 0 for x,y in zip(self.coordinates,v.coordinates)}
-        if len(check_coordinates) == 1:
-            return True
-        else:
-            return False
+        return len(check_coordinates) == 1
         
-    def is_ortho(self,v):
-        if self.dot_product(v) == 0:
-            return True
-        else:
-            return False
-        
+    def is_ortho(self,v, tolerance=1e-10):
+        return abs(self.dot_product(v)) < tolerance       
         
         
