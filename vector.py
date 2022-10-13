@@ -71,6 +71,21 @@ class Vector(object):
         return len(check_coordinates) == 1
         
     def is_ortho(self,v, tolerance=1e-10):
-        return abs(self.dot_product(v)) < tolerance       
+        return abs(self.dot_product(v)) < tolerance    
+
+    def projection(self,b):
+        unit_vector_b = b.normalize()
+        return self.dot_product(unit_vector_b)*unit_vector_b
+        
+    def ortho_component(self,b):
+        v_proj = self.projection(b)
+        return self.minus(v_proj)
+        
+    def decompose(self,b):
+        proj = self.projection(b)
+        comp = self.ortho_component(b)
+        return (proj,comp)
+        
+        
         
         
