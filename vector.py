@@ -75,7 +75,8 @@ class Vector(object):
 
     def projection(self,b):
         unit_vector_b = b.normalize()
-        return self.dot_product(unit_vector_b)*unit_vector_b
+        x = self.dot_product(unit_vector_b)
+        return unit_vector_b.times_scalar(x)
         
     def ortho_component(self,b):
         v_proj = self.projection(b)
