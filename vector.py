@@ -86,8 +86,14 @@ class Vector(object):
         
         
     def ortho_component(self,b):
-        v_proj = self.projection(b)
-        return self.minus(v_proj)
+        try:
+            v_proj = self.projection(b)
+            return self.minus(v_proj)
+        except Exception as e:
+            if str(e) == 'Cannot normalize the zero vector':
+                raise Exception('No unique orthogonal component for zero vector')
+            else:
+                raise e 
         
     def decompose(self,b):
         proj = self.projection(b)
