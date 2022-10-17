@@ -74,9 +74,16 @@ class Vector(object):
         return abs(self.dot_product(v)) < tolerance    
 
     def projection(self,b):
-        unit_vector_b = b.normalize()
-        x = self.dot_product(unit_vector_b)
-        return unit_vector_b.times_scalar(x)
+        try:
+            unit_vector_b = b.normalize()
+            x = self.dot_product(unit_vector_b)
+            return unit_vector_b.times_scalar(x)
+        except Exception as e:
+            if str(e) == 'Cannot normalize the zero vector':
+                raise Exception('No unique parallel component to zero vector')
+            else:
+                raise e
+        
         
     def ortho_component(self,b):
         v_proj = self.projection(b)
