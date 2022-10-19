@@ -100,6 +100,39 @@ class Vector(object):
         comp = self.ortho_component(b)
         return (proj,comp)
         
+    def cross_product(self,v):
+        '''Calculateas the cross product of two 3-dim vectors.  Vectors must be 3-dim.'''
+        if self.dimension == 3 and v.dimension == 3:
+            x_1, y_1, z_1 = self.coordinates
+            x_2, y_2, z_2 = v.coordinates
+            ans = []
+            ans.append(y_1*z_2 - y_2*z_1)
+            ans.append(-(x_1*z_2 - x_2*z_1))
+            ans.append(x_1*y_2 - x_2*y_1)
+            return Vector(ans)
+        else:
+            raise Exception('Both vectors must have dimension of 3')
+        
+    def parallelogram_area(self,v):
+        '''
+        Calculates the area of a parallelogram spanned by self and v.
+        
+        Area = base x height.  In this case base is the magnitude of self and height is the magnitude of v x sin(theta).  In other words base x height is equivalent to the cross product of self and v.
+        '''
+        
+        cross = self.cross_product(v)
+        return cross.magnitude()
+        
+    def triangle_area(self,v):
+        '''
+        Calculates the area of a triangle spanned by self and v.
+        
+        See docstring for parallelogram_area.  Since the triangle is half of the paralellogram area, simply need to multiply the parallelogram area by 1/2.        
+        '''
+        
+        return(self.parallelogram_area(v) * Decimal(0.5))
+    
+        
         
         
         
