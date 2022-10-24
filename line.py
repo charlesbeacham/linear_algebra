@@ -95,6 +95,17 @@ class Line(object):
             if not MyDecimal(item).is_near_zero():
                 return k
         raise Exception(Line.NO_NONZERO_ELTS_FOUND_MSG)
+        
+    def is_parallel_line(self,l2):
+        '''
+        Determines if two lines are parallel.  They could also be equal.
+        Two lines are parallel if their normal vectors are parallel.
+        '''
+        
+        return self.normal_vector.is_parallel(l2.normal_vector)
+        
+    
+    
 
 
 class MyDecimal(Decimal):
