@@ -104,8 +104,25 @@ class Line(object):
         
         return self.normal_vector.is_parallel(l2.normal_vector)
         
-    
-    
+    def is_equal_line(self,l2):
+        '''
+        Determines if two lines are equal.  Two lines are equal if the 
+        vector connecting a point from each line is parallel to the line.
+        i.e. the vector will be orthogonal to both lines' normal vectors.
+        
+        The lines also will have infinite intersections.
+        '''
+        if not self.is_parallel_line(l2):
+            return False
+            
+        x0,y0 = self.basepoint, l2.basepoint
+        connect_vector = x0.minus(y0)
+        
+        if connect_vector.is_ortho(self.normal_vector) and connect_vector.is_ortho(l2.normal_vector):
+            return True
+        else:
+            return False 
+        
 
 
 class MyDecimal(Decimal):
