@@ -122,6 +122,39 @@ class Line(object):
             return True
         else:
             return False 
+            
+    def get_intersection(self,l2):
+        '''
+        Find the intersection point of two lines, or return that there is no intersection or infinite intersections.
+        
+        If lines are not parallel then AD-BC cannot be zero.  Both A & C
+        can also not both be zero b/c then both lines would be horizontal 
+        and thus parallel.
+        '''
+        l_1,l_2 = self, l2
+        
+        if l_1.is_equal_line(l_2):
+            print("Both lines are equal.")   
+            return
+            
+        elif l_1.is_parallel_line(l_2):
+            print("Both lines are parallel but not equal.")
+            return
+        
+        else:
+            if l_1.normal_vector.coordinates[0] == 0:
+                l_1,l_2 = l2,self
+            
+            A,B = l_1.normal_vector.coordinates
+            k1 = l_1.constant_term
+            C,D = l_2.normal_vector.coordinates
+            k2 = l_2.constant_term
+            
+            x = (D*k1 - B*k2) / (A*D - B*C)
+            y = (-C*k1 + A*k2) / (A*D - B*C)
+            
+            return Vector([x,y])
+            
         
 
 
