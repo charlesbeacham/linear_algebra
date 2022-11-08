@@ -95,6 +95,36 @@ class Plane(object):
             if not MyDecimal(item).is_near_zero():
                 return k
         raise Exception(Plane.NO_NONZERO_ELTS_FOUND_MSG)
+        
+        
+    def is_parallel_plane(self,p2):
+        '''
+        Determines if two planes are parallel.  They could also be equal.
+        Two planes are parallel if their normal vectors are parallel.
+        '''
+        
+        return self.normal_vector.is_parallel(p2.normal_vector)
+        
+    def is_equal_plane(self,p2):
+        '''
+        Determines if two planes are equal.  Two planes are equal if the 
+        vector connecting a point from each plane is parallel to the plane.
+        i.e. the vector will be orthogonal to both planes' normal vectors.
+        
+        The planes also will have infinite intersections.
+        '''
+        if not self.is_parallel_plane(p2):
+            return False
+            
+        x0,y0 = self.basepoint, p2.basepoint
+        connect_vector = x0.minus(y0)
+        
+        if connect_vector.is_ortho(self.normal_vector) and connect_vector.is_orth(p2.normal_vector):
+            return True
+        else:
+            return False
+        
+    
 
 
 class MyDecimal(Decimal):
