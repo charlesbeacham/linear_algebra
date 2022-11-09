@@ -119,7 +119,7 @@ class Plane(object):
         x0,y0 = self.basepoint, p2.basepoint
         connect_vector = x0.minus(y0)
         
-        if connect_vector.is_ortho(self.normal_vector) and connect_vector.is_orth(p2.normal_vector):
+        if connect_vector.is_ortho(self.normal_vector) and connect_vector.is_ortho(p2.normal_vector):
             return True
         else:
             return False
