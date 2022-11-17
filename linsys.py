@@ -27,8 +27,10 @@ class LinearSystem(object):
 
 
     def swap_rows(self, row1, row2):
-        pass # add your code here
-
+        '''
+        Takes interger values row1 and row2 and swaps those rows by index where row 0 = index 0.
+        '''
+        self[row1], self[row2] = self[row2], self[row1]
 
     def multiply_coefficient_and_row(self, coefficient, row):
         pass # add your code here
