@@ -33,9 +33,17 @@ class LinearSystem(object):
         self[row1], self[row2] = self[row2], self[row1]
 
     def multiply_coefficient_and_row(self, coefficient, row):
-        pass # add your code here
-
-
+        '''
+        Takes coefficient value and a row id and multiplies that row's plane equation through by the coefficient.
+        '''        
+        n = self[row].normal_vector
+        k = self[row].constant_term
+        
+        new_normal_vector = n.times_scalar(coefficient)
+        new_constant_term = k * coefficient
+        
+        self[row] = Plane(normal_vector=new_normal_vector,constant_term=new_constant_term)
+        
     def add_multiple_times_row_to_row(self, coefficient, row_to_add, row_to_be_added_to):
         pass # add your code here
 
