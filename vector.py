@@ -70,6 +70,12 @@ class Vector(object):
         check_coordinates = {x/y if y != 0 else 0 for x,y in zip(self.coordinates,v.coordinates)}
         return len(check_coordinates) == 1
         
+    def is_zero(self, tolerance=1e-10):
+        '''
+        Check if the vector is the zero vector
+        '''
+        return self.magnitude() < tolerance
+        
     def is_ortho(self,v, tolerance=1e-10):
         return abs(self.dot_product(v)) < tolerance    
 

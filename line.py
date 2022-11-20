@@ -112,6 +112,21 @@ class Line(object):
         
         The lines also will have infinite intersections.
         '''
+        
+        #this if statement handles the case of the normal vector being the zero vector
+        #if both normal vectors are zero vectors, then if the constants are equal the lines
+        #are equal.  If not, then they are not equal.
+        if self.normal_vector.is_zero():
+            if not l2.normal_vector.is_zero():
+                return False
+            
+            else:
+                diff = self.constant_term - l2.constant_term
+                return MyDecimal(diff).is_near_zero()
+        
+        elif l2.normal_vector.is_zero():
+            return False
+        
         if not self.is_parallel_line(l2):
             return False
             
@@ -133,7 +148,7 @@ class Line(object):
         '''
         l_1,l_2 = self, l2
         
-        if l_1.is_equal_line(l_2):
+        if l_1 == l_2:
             print("Both lines are equal.")   
             return
             
