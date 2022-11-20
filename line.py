@@ -104,7 +104,7 @@ class Line(object):
         
         return self.normal_vector.is_parallel(l2.normal_vector)
         
-    def is_equal_line(self,l2):
+    def __eq__(self,l2):
         '''
         Determines if two lines are equal.  Two lines are equal if the 
         vector connecting a point from each line is parallel to the line.
