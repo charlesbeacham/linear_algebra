@@ -105,7 +105,7 @@ class Plane(object):
         
         return self.normal_vector.is_parallel(p2.normal_vector)
         
-    def is_equal_plane(self,p2):
+    def __eq__(self,p2):
         '''
         Determines if two planes are equal.  Two planes are equal if the 
         vector connecting a point from each plane is parallel to the plane.
@@ -113,6 +113,21 @@ class Plane(object):
         
         The planes also will have infinite intersections.
         '''
+        
+        #this if statement handles the case of the normal vector being the zero vector
+        #if both normal vectors are zero vectors, then if the constants are equal the planes
+        #are equal.  If not, then they are not equal.
+        if self.normal_vector.is_zero():
+            if not p2.normal_vector.is_zero():
+                return False
+            
+            else:
+                diff = self.constant_term - p2.constant_term
+                return MyDecimal(diff).is_near_zero()
+        
+        elif p2.normal_vector.is_zero():
+            return False
+            
         if not self.is_parallel_plane(p2):
             return False
             
