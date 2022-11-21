@@ -45,8 +45,14 @@ class LinearSystem(object):
         self[row] = Plane(normal_vector=new_normal_vector,constant_term=new_constant_term)
         
     def add_multiple_times_row_to_row(self, coefficient, row_to_add, row_to_be_added_to):
-        pass # add your code here
-
+               
+        n_add, k_add = self[row_to_add].normal_vector, self[row_to_add].constant_term
+        n_add_to, k_add_to = self[row_to_be_added_to].normal_vector, self[row_to_be_added_to].constant_term
+        
+        new_normal_vector = n_add.times_scalar(coefficient).plus(n_add_to)
+        new_constant_term = (k_add * coefficient) + k_add_to
+        
+        self[row_to_be_added_to] = Plane(normal_vector=new_normal_vector,constant_term=new_constant_term) 
 
     def indices_of_first_nonzero_terms_in_each_row(self):
         num_equations = len(self)
