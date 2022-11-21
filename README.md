@@ -1,1 +1,3 @@
-new readme
+#Linear Algebra Udacity Project
+
+add here
