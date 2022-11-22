@@ -54,6 +54,17 @@ class LinearSystem(object):
         
         self[row_to_be_added_to] = Plane(normal_vector=new_normal_vector,constant_term=new_constant_term) 
 
+    def compute_triangular_form(self):
+        system = deepcopy(self)
+        s_len = len(system)
+        
+        while not system.indices_of_first_nonzero_terms_in_each_row() == list(range(2)):
+            
+        
+        
+        
+        return system
+    
     def indices_of_first_nonzero_terms_in_each_row(self):
         num_equations = len(self)
         num_variables = self.dimension
