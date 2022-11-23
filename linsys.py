@@ -55,15 +55,41 @@ class LinearSystem(object):
         self[row_to_be_added_to] = Plane(normal_vector=new_normal_vector,constant_term=new_constant_term) 
 
     def compute_triangular_form(self):
-        system = deepcopy(self)
-        s_len = len(system)
+        '''
+        Initial step of computing the triangular form.
+        '''
+        system = deepcopy(self)      
+        system_indices = system.indices_of_first_nonzero_terms_in_each_row()
+        LinearSystem.del_for(system_indices)  
+        check_list = list(range(len(system_indices)))        
         
-        while not system.indices_of_first_nonzero_terms_in_each_row() == list(range(2)):
+        while not system_indices == check_list:  
             
-        
+            
+            
+            #This block will check the first non-zero idices.
+            #If the indices list is in the form of [0,1,2,etc...] this means 
+            #the system is in triangular form.
+            #if some planes were redundant then there will be trailing zeros.
+            #del_for removes the trailing zeros and then the check_list must be updated to the new length.
+            system_indices = system.indices_of_first_nonzero_terms_in_each_row()
+            LinearSystem.del_for(system_indices)  
+            check_list = list(range(len(system_indices)))    
+
         
         
         return system
+        
+    @staticmethod
+    def del_for(mylist):
+        '''
+        Removes trailing zeros in a list.
+        '''
+        for i in reversed(mylist):
+            if i == -1:
+                del mylist[-1]
+            else:
+                break
     
     def indices_of_first_nonzero_terms_in_each_row(self):
         num_equations = len(self)
