@@ -57,40 +57,42 @@ class LinearSystem(object):
     def compute_triangular_form(self):
         '''
         Initial step of computing the triangular form.
+        The algorithm uses a for-while loop to loop over each plane.  If the planes first non_zero index is correct algorithm
+        will leave that plane alone.  If the planes first non_zero index is incorrect it will loop over that plane with a while loop
+        until it is either correct or it's normal vector is reduced to the zero vector.
         '''
-        system = deepcopy(self)      
-        system_indices = system.indices_of_first_nonzero_terms_in_each_row()
-        LinearSystem.del_for(system_indices)  
-        check_list = list(range(len(system_indices)))        
+        system = deepcopy(self)
+        sys_ind = system.indices_of_first_nonzero_terms_in_each_row()
+        dim = system.dimension
         
-        while not system_indices == check_list:  
-            
-            
-            
-            #This block will check the first non-zero idices.
-            #If the indices list is in the form of [0,1,2,etc...] this means 
-            #the system is in triangular form.
-            #if some planes were redundant then there will be trailing zeros.
-            #del_for removes the trailing zeros and then the check_list must be updated to the new length.
-            system_indices = system.indices_of_first_nonzero_terms_in_each_row()
-            LinearSystem.del_for(system_indices)  
-            check_list = list(range(len(system_indices)))    
-
-        
-        
+        for i in range(len(sys_ind)):
+            if i < dim:
+                while (sys_ind[i] != i):
+                    if sys_ind[i] == -1:
+                        break
+                    try:
+                        index_to_switch = sys_ind.index(i,i+1) #check if any other planes have the necessary non-zero index for this position
+                        system.swap_rows(i,index_to_switch)  #if so switch them
+                        sys_ind = system.indices_of_first_nonzero_terms_in_each_row() #update while loop exit criteria 
+                    except: #if not need to multiply another row and add until the non_zero_ind == i
+                        for k in range(i):
+                            multiple = system[i].normal_vector.coordinates[k]/system[k].normal_vector.coordinates[k]*-1
+                            system.add_multiple_times_row_to_row(multiple,k,i)
+                            sys_ind = system.indices_of_first_nonzero_terms_in_each_row() #update while loop exit criteria
+                            if sys_ind[i] == i:
+                                break
+                                
+            else:  #if the number of planes is greater than the number of dims, it is redundant and needs to be reduced
+                while sys_ind[i] != -1:  #when the first_non_zero index is -1, that means there is no non_zero_index, thus the equation is redundant
+                    for k in range(i):
+                            multiple = system[i].normal_vector.coordinates[k]/system[k].normal_vector.coordinates[k]*-1
+                            system.add_multiple_times_row_to_row(multiple,k,i)
+                            sys_ind = system.indices_of_first_nonzero_terms_in_each_row() #update while loop exit criteria
+                            if sys_ind[i] == -1:
+                                break     
+                                
         return system
         
-    @staticmethod
-    def del_for(mylist):
-        '''
-        Removes trailing zeros in a list.
-        '''
-        for i in reversed(mylist):
-            if i == -1:
-                del mylist[-1]
-            else:
-                break
-    
     def indices_of_first_nonzero_terms_in_each_row(self):
         num_equations = len(self)
         num_variables = self.dimension
