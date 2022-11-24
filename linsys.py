@@ -67,14 +67,23 @@ class LinearSystem(object):
         
         for i in range(len(sys_ind)):
             if i < dim:
-                while (sys_ind[i] != i):
-                    if sys_ind[i] == -1:
-                        break
+                while (sys_ind[i] != i):  
+                    if sys_ind[i] == -1: #if normal vector is zero first try swapping it with a later plane to eliminate any zero division errors in the for loop below
+                        try:
+                            b = [x != -1 for x in sys_ind] 
+                            index_to_switch = b.index(True,i+1) #find the first Plane after i where the index != -1
+                            system.swap_rows(i,index_to_switch)
+                            sys_ind = system.indices_of_first_nonzero_terms_in_each_row() #update while loop exit criteria
+                        except:
+                            pass
+                    
                     try:
                         index_to_switch = sys_ind.index(i,i+1) #check if any other planes have the necessary non-zero index for this position
                         system.swap_rows(i,index_to_switch)  #if so switch them
                         sys_ind = system.indices_of_first_nonzero_terms_in_each_row() #update while loop exit criteria 
                     except: #if not need to multiply another row and add until the non_zero_ind == i
+                        if sys_ind[i] == -1: #if after the for loop the plane's normal vector is reduced to the zero vector then it cannot be furter reduced and should be skipped.  Put this snippit here to prevent the for loop below from trying to divide by 0.
+                            break
                         for k in range(i):
                             multiple = system[i].normal_vector.coordinates[k]/system[k].normal_vector.coordinates[k]*-1
                             system.add_multiple_times_row_to_row(multiple,k,i)
