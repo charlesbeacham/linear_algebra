@@ -94,6 +94,20 @@ class LinearSystem(object):
     def compute_rref(self):
         tf = self.compute_triangular_form()
         
+        for i in reversed(range(len(tf))):
+            if sum(tf[i].normal_vector.coordinates) == Decimal('0'):
+                continue
+                
+            #make leading term == 1
+            coefficient = Decimal('1') / tf[i].normal_vector.coordinates[i]
+            coefficient *= -1 if coefficient < 0 else coefficient
+            tf.multiply_coefficient_and_row(coefficient,i)
+            
+            #clear above the variable
+            for k in range(i):
+                multiple = tf[k].normal_vector.coordinates[i]/tf[i].normal_vector.coordinates[i]*-1
+                tf.add_multiple_times_row_to_row(multiple,i,k)
+        
         
         return tf
         
