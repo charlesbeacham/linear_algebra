@@ -91,7 +91,7 @@ class LinearSystem(object):
                                 
         return system
         
-    def computer_rref(self):
+    def compute_rref(self):
         tf = self.compute_triangular_form()
         
         
