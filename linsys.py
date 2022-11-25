@@ -91,6 +91,12 @@ class LinearSystem(object):
                                 
         return system
         
+    def computer_rref(self):
+        tf = self.compute_triangular_form()
+        
+        
+        return tf
+        
     def indices_of_first_nonzero_terms_in_each_row(self):
         num_equations = len(self)
         num_variables = self.dimension
