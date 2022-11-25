@@ -58,47 +58,36 @@ class LinearSystem(object):
         '''
         Initial step of computing the triangular form.
         The algorithm uses a for-while loop to loop over each plane.  If the planes first non_zero index is correct algorithm
-        will leave that plane alone.  If the planes first non_zero index is incorrect it will loop over that plane with a while loop
+        will leave that plane alone.-  Otherwise it will first try to swap it for a correct one.  If the correct plane does not exist it will loop over that plane with a while loop
         until it is either correct or it's normal vector is reduced to the zero vector.
         '''
         system = deepcopy(self)
         sys_ind = system.indices_of_first_nonzero_terms_in_each_row()
         dim = system.dimension
-        
+  
         for i in range(len(sys_ind)):
-            if i < dim:
-                while (sys_ind[i] != i):  
-                    if sys_ind[i] == -1: #if normal vector is zero first try swapping it with a later plane to eliminate any zero division errors in the for loop below
-                        try:
-                            b = [x != -1 for x in sys_ind] 
-                            index_to_switch = b.index(True,i+1) #find the first Plane after i where the index != -1
-                            system.swap_rows(i,index_to_switch)
-                            sys_ind = system.indices_of_first_nonzero_terms_in_each_row() #update while loop exit criteria
-                        except:
-                            pass
-                    
+            check_var = i if i < dim else -1            
+            while (sys_ind[i] != check_var):  
+                if sys_ind[i] == -1: #if normal vector is zero first try swapping it with a later plane to eliminate any zero division errors in the for loop below
                     try:
-                        index_to_switch = sys_ind.index(i,i+1) #check if any other planes have the necessary non-zero index for this position
-                        system.swap_rows(i,index_to_switch)  #if so switch them
-                        sys_ind = system.indices_of_first_nonzero_terms_in_each_row() #update while loop exit criteria 
-                    except: #if not need to multiply another row and add until the non_zero_ind == i
-                        if sys_ind[i] == -1: #if after the for loop the plane's normal vector is reduced to the zero vector then it cannot be furter reduced and should be skipped.  Put this snippit here to prevent the for loop below from trying to divide by 0.
-                            break
-                        for k in range(i):
-                            multiple = system[i].normal_vector.coordinates[k]/system[k].normal_vector.coordinates[k]*-1
-                            system.add_multiple_times_row_to_row(multiple,k,i)
-                            sys_ind = system.indices_of_first_nonzero_terms_in_each_row() #update while loop exit criteria
-                            if sys_ind[i] == i:
-                                break
-                                
-            else:  #if the number of planes is greater than the number of dims, it is redundant and needs to be reduced
-                while sys_ind[i] != -1:  #when the first_non_zero index is -1, that means there is no non_zero_index, thus the equation is redundant
+                        b = [x != -1 for x in sys_ind] 
+                        index_to_switch = b.index(True,i+1) #find the first Plane after i where the index != -1
+                        system.swap_rows(i,index_to_switch)
+                        sys_ind = system.indices_of_first_nonzero_terms_in_each_row() #update while loop exit criteria
+                    except:
+                        break
+                
+                try:
+                    index_to_switch = sys_ind.index(i,i+1) #check if any other planes have the necessary non-zero index for this position
+                    system.swap_rows(i,index_to_switch)  #if so switch them
+                    sys_ind = system.indices_of_first_nonzero_terms_in_each_row() #update while loop exit criteria 
+                except: #if not need to multiply another row and add until the non_zero_ind == i                       
                     for k in range(i):
-                            multiple = system[i].normal_vector.coordinates[k]/system[k].normal_vector.coordinates[k]*-1
-                            system.add_multiple_times_row_to_row(multiple,k,i)
-                            sys_ind = system.indices_of_first_nonzero_terms_in_each_row() #update while loop exit criteria
-                            if sys_ind[i] == -1:
-                                break     
+                        multiple = system[i].normal_vector.coordinates[k]/system[k].normal_vector.coordinates[k]*-1
+                        system.add_multiple_times_row_to_row(multiple,k,i)
+                        sys_ind = system.indices_of_first_nonzero_terms_in_each_row() #update while loop exit criteria
+                        if sys_ind[i] == check_var:
+                            break
                                 
         return system
         
