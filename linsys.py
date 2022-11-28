@@ -68,33 +68,29 @@ class LinearSystem(object):
         for i in range(len(sys_ind)):
             check_var = i if i < dim else -1            
             if sys_ind[i] != check_var:  
-                if sys_ind[i] == -1: #if normal vector is zero first try swapping it with a later plane to eliminate any zero division errors in the for loop below
-                    try:
-                        b = [x != -1 for x in sys_ind] 
-                        index_to_switch = b.index(True,i+1) #find the first Plane after i where the index != -1
-                        system.swap_rows(i,index_to_switch)
-                        sys_ind = system.indices_of_first_nonzero_terms_in_each_row() #update while loop exit criteria
-                    except:
+                if sys_ind[i] == -1: #if normal vector is zero first try swapping it with a later plane to eliminate any zero division errors in the for loop below                    
+                    b = [x != -1 for x in sys_ind] 
+                    index_to_switch = LinearSystem.find_switch_index(b,True,i) #find the first Plane after i where the index != -1
+                    system.swap_rows(i,index_to_switch)
+                    sys_ind = system.indices_of_first_nonzero_terms_in_each_row() #update while loop exit criteria
+                    if sys_ind[i] == -1: #if after swap still equals -1 then need to quit loop b/c there is nothing left to switch.
                         break
                 
-                try:
-                    index_to_switch = sys_ind.index(i,i+1) #check if any other planes have the necessary non-zero index for this position
-                    system.swap_rows(i,index_to_switch)  #if so switch them
-                    sys_ind = system.indices_of_first_nonzero_terms_in_each_row() #update while loop exit criteria 
+                #try swapping for the correct index
+                index_to_switch = LinearSystem.find_switch_index(sys_ind,i,i) #check if any other planes have the necessary non-zero index for this position
+                system.swap_rows(i,index_to_switch)  #if so switch them
+                sys_ind = system.indices_of_first_nonzero_terms_in_each_row() #update while loop exit criteria 
+                
+                #if the normal_vector value under consideration is 0 (i.e. sys_ind[i] > check_var, then we need to swap it for any subsequant non-zero normal vector value
+                if sys_ind[i] > check_var and check_var != -1:              
+                    b = [x <= check_var and x != -1 for x in sys_ind] 
+                    index_to_switch = LinearSystem.find_switch_index(b,True,i) #find the first Plane after i where the index != -1 or is < check var 
+                    system.swap_rows(i,index_to_switch)
+                    sys_ind = system.indices_of_first_nonzero_terms_in_each_row() #update while loop exit criteria
+                    if sys_ind[i] > check_var and check_var != -1: #if swap wasn't successful then break since there is nothing left to switch
+                        break                
                     
-                except:
-                    pass
-                    
-                if sys_ind[i] > check_var and check_var != -1:
-                    try:
-                        b = [x <= check_var and x != -1 for x in sys_ind] 
-                        index_to_switch = b.index(True,i+1) #find the first Plane after i where the index != -1
-                        system.swap_rows(i,index_to_switch)
-                        sys_ind = system.indices_of_first_nonzero_terms_in_each_row() #update while loop exit criteria
-                    except:
-                        break
-                    
-                    
+                #finally, once we have confirmed that there is a non-zero value in the normal vector and that we weren't able to swap with the correct index, we can clear the other normal vector values until the current index is the leading index.    
                 if sys_ind[i] != check_var: #if not need to multiply another row and add until the non_zero_ind == i 
                     try:
                         for k in range(len(sys_ind)):
@@ -105,8 +101,20 @@ class LinearSystem(object):
                                 break
                     except:
                         break
-                                
+                        
         return system
+    
+    @staticmethod
+    def find_switch_index(list_to_search,value_to_find,start_point):
+        '''
+        if it finds the correct index it will return that index, otherwise returns the original index.
+        '''        
+        try:
+            return_index = list_to_search.index(value_to_find,start_point + 1)
+        except:
+            return_index = start_point
+
+        return return_index
         
     def compute_rref(self):
         tf = self.compute_triangular_form()
