@@ -121,17 +121,16 @@ class LinearSystem(object):
         
         for i in reversed(range(len(tf))):
             if sum(tf[i].normal_vector.coordinates) == Decimal('0'):
-                continue
-                
-            #make leading term == 1
-            coefficient = Decimal('1') / tf[i].normal_vector.coordinates[i]
-            coefficient *= -1 if coefficient < 0 else coefficient
-            tf.multiply_coefficient_and_row(coefficient,i)
-            
+                continue            
+                     
             #clear above the variable
             for k in range(i):
                 multiple = tf[k].normal_vector.coordinates[i]/tf[i].normal_vector.coordinates[i]*-1
                 tf.add_multiple_times_row_to_row(multiple,i,k)
+                
+            #make leading term == 1
+            coefficient = Decimal('1') / tf[i].normal_vector.coordinates[i]
+            tf.multiply_coefficient_and_row(coefficient,i)
         
         
         return tf
