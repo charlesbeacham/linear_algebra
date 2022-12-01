@@ -137,6 +137,31 @@ class LinearSystem(object):
         
         return tf
         
+    def compute_ge_solution(self):
+        '''
+        This function will return the result of the unique solution if there is one.  Otherwise it will print if there is no solution or if there are infinite solutions.  No solution if any 0 = k for k non-zero.  Infinite if there is a variable that is not a leading variable in any equation.  Unique solution if each variable is a lead variable and no 0 = k.
+        '''
+        rref = self.compute_rref()
+        
+        #test if there is no solutions    
+        nv = [p.normal_vector.is_zero() for p in rref] #True if normal_vector is zero vector
+        cons = [abs(p.constant_term) < 1e-10 for p in rref] #true if constant term is zero
+        no_solution_test = [x == (True,False) for x in zip(nv,cons)] #True if normal_vector is zero and constant term is not zero
+        
+        #test if there are infinite solutions
+        terms = rref.indices_of_first_nonzero_terms_in_each_row()[0:rref.dimension] #an infinite solution exists if there is a variable that is not a leading variable in any equation.
+        infinite_solution_test = [x == -1 for x in terms] #True if both normal_vector and constant_term are both 0
+        
+        if any(no_solution_test): 
+            print("There is no solution")
+            
+        elif any(infinite_solution_test):
+            print("There are infinite solutions")
+            
+        else:
+            result = [p.constant_term for p in rref][0:rref.dimension]
+            return(Vector(result))
+        
     def indices_of_first_nonzero_terms_in_each_row(self):
         num_equations = len(self)
         num_variables = self.dimension
