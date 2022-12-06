@@ -219,6 +219,18 @@ class Parametrization(object):
         except AssertionError:
             raise Exception(BASEPT_AND_DIR_VECTORS_MUST_BE_IN_SAME_DIM_MSG)
 
+    def __str__(self):
+
+        output = ''
+        for coord in range(self.dimension):
+            output += 'x_{} = {} '.format(coord + 1,
+                                          round(self.basepoint.coordinates[coord], 3))
+            for free_var, vector in enumerate(self.direction_vectors):
+                output += '+ {} t_{}'.format(round(vector.coordinates[coord], 3),
+                                             free_var + 1)
+            output += '\n'
+        return output
+
 class MyDecimal(Decimal):
     def is_near_zero(self, eps=1e-10):
         return abs(self) < eps
