@@ -119,13 +119,14 @@ class LinearSystem(object):
     def compute_rref(self):
         tf = self.compute_triangular_form()
         dim = tf.dimension
+        sys_ind = tf.indices_of_first_nonzero_terms_in_each_row()
         
         for i in reversed(range(len(tf))):
             if MyDecimal(sum(tf[i].normal_vector.coordinates)).is_near_zero():
                 continue            
                      
             #clear above the variable
-            j = i if i < dim else dim-1
+            j = sys_ind[i]
             for k in range(i):
                 multiple = tf[k].normal_vector.coordinates[j]/tf[i].normal_vector.coordinates[j]*-1
                 tf.add_multiple_times_row_to_row(multiple,i,k)
