@@ -162,6 +162,47 @@ class LinearSystem(object):
         else:
             result = [p.constant_term for p in rref][0:rref.dimension]
             return(Vector(result))
+            
+    def parm_calc(self):
+        rref = self.compute_rref()
+        
+        direction_vectors = rref.extract_direction_vectors_for_parameterization()
+        basepoint = rref.extract_basepoint_for_parameterization()
+        
+        return Parametrization(basepoint, direction_vectors)
+        
+    def extract_basepoint_for_parameterization(self):
+        num_variables = self.dimension
+        pivot_indices = self.indices_of_first_nonzero_terms_in_each_row()
+        
+        basepoint_coords = [0] * num_variables
+        
+        for i,p in enumerate(self.planes):
+            pivot_var = pivot_indices[i]
+            if pivot_var < 0:
+                break
+            basepoint_coords[pivot_var] = p.constant_term
+            
+        return Vector(basepoint_coords)        
+        
+    def extract_direction_vectors_for_parameterization(self):
+        num_variables = self.dimension
+        pivot_indices = self.indices_of_first_nonzero_terms_in_each_row()
+        free_variable_indices = set(range(num_variables)) - set(pivot_indices)
+        
+        direction_vectors = []
+        
+        for free_var in free_variable_indices:
+            vector_coords = [0] * num_variables
+            vector_coords[free_var] = 1
+            for i,p in enumerate(self.planes):
+                pivot_var = pivot_indices[i]
+                if pivot_var < 0:
+                    break
+                vector_coords[pivot_var] = -p.normal_vector.coordinates[free_var]
+            direction_vectors.append(Vector(vector_coords))
+            
+        return direction_vectors
         
     def indices_of_first_nonzero_terms_in_each_row(self):
         num_equations = len(self)
@@ -230,7 +271,7 @@ class Parametrization(object):
                 output += '+ {} t_{}'.format(round(vector.coordinates[coord], 3),
                                              free_var + 1)
             output += '\n'
-        return output
+        return output           
 
 class MyDecimal(Decimal):
     def is_near_zero(self, eps=1e-10):
