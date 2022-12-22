@@ -156,7 +156,7 @@ class LinearSystem(object):
         if any(no_solution_test): 
             print("There is no solution")
             
-        elif any(infinite_solution_test):
+        elif any(infinite_solution_test) or len(terms) < rref.dimension:
             print("There are infinite solutions")
             
         else:
